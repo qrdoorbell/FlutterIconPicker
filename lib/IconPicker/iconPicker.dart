@@ -21,6 +21,7 @@ class FIPIconPicker extends StatefulWidget {
   final double? crossAxisSpacing;
   final Color? backgroundColor;
   final bool? showTooltips;
+  final IconData? selectedIcon;
 
   const FIPIconPicker({
     Key? key,
@@ -34,6 +35,7 @@ class FIPIconPicker extends StatefulWidget {
     this.iconColor,
     this.showTooltips,
     this.customIconPack,
+    this.selectedIcon,
   }) : super(key: key);
 
   @override
@@ -51,8 +53,7 @@ class _FIPIconPickerState extends State<FIPIconPicker> {
 
       if (widget.iconPack != null)
         for (var pack in widget.iconPack!) {
-          if (mounted)
-            widget.iconController.addAll(FIPIconManager.getSelectedPack(pack));
+          if (mounted) widget.iconController.addAll(FIPIconManager.getSelectedPack(pack));
         }
     });
   }
@@ -65,18 +66,14 @@ class _FIPIconPickerState extends State<FIPIconPicker> {
             text: TextSpan(
               text: widget.noResultsText! + ' ',
               style: TextStyle(
-                color: FIPColorBrightness(widget.backgroundColor!).isLight()
-                    ? Colors.black
-                    : Colors.white,
+                color: FIPColorBrightness(widget.backgroundColor!).isLight() ? Colors.black : Colors.white,
               ),
               children: [
                 TextSpan(
                   text: widget.iconController.searchTextController.text,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: FIPColorBrightness(widget.backgroundColor!).isLight()
-                        ? Colors.black
-                        : Colors.white,
+                    color: FIPColorBrightness(widget.backgroundColor!).isLight() ? Colors.black : Colors.white,
                   ),
                 ),
               ],
@@ -97,74 +94,41 @@ class _FIPIconPickerState extends State<FIPIconPicker> {
             else
               Positioned.fill(
                 child: GridView.builder(
+                    controller: ScrollController(
+                        initialScrollOffset:
+                            ((controller.icons.entries.toList().indexWhere((x) => x.value == widget.selectedIcon) + 1) / 7).floor() * 50),
                     itemCount: controller.length,
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                       childAspectRatio: 1 / 1,
                       mainAxisSpacing: widget.mainAxisSpacing ?? 5,
                       crossAxisSpacing: widget.crossAxisSpacing ?? 5,
-                      maxCrossAxisExtent:
-                          widget.iconSize != null ? widget.iconSize! + 10 : 50,
+                      maxCrossAxisExtent: widget.iconSize != null ? widget.iconSize! + widget.iconSize! * 0.25 : 50,
                     ),
                     itemBuilder: (context, index) {
                       var item = controller.entries.elementAt(index);
+                      var icon = Center(child: Icon(item.value, size: widget.iconSize, color: widget.iconColor));
+                      var iconWidget = widget.selectedIcon == item.value
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(widget.iconSize! * 0.25),
+                                border:
+                                    Border.all(color: widget.iconColor ?? Theme.of(context).primaryColor, width: widget.iconSize! * 0.05),
+                              ),
+                              child: icon,
+                            )
+                          : icon;
 
                       return GestureDetector(
                         onTap: () => Navigator.pop(context, item.value),
                         child: widget.showTooltips!
                             ? Tooltip(
                                 message: item.key,
-                                child: Icon(
-                                  item.value,
-                                  size: widget.iconSize,
-                                  color: widget.iconColor,
-                                ),
+                                child: iconWidget,
                               )
-                            : Icon(
-                                item.value,
-                                size: widget.iconSize,
-                                color: widget.iconColor,
-                              ),
+                            : iconWidget,
                       );
                     }),
               ),
-            IgnorePointer(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.lerp(
-                          Alignment.topCenter, Alignment.center, .05)!,
-                      colors: [
-                        widget.backgroundColor!,
-                        widget.backgroundColor!.withOpacity(.1),
-                      ],
-                      stops: [
-                        0.0,
-                        1.0
-                      ]),
-                ),
-                child: Container(),
-              ),
-            ),
-            IgnorePointer(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.lerp(
-                          Alignment.bottomCenter, Alignment.center, .05)!,
-                      colors: [
-                        widget.backgroundColor!,
-                        widget.backgroundColor!.withOpacity(.1),
-                      ],
-                      stops: [
-                        0.0,
-                        1.0
-                      ]),
-                ),
-                child: Container(),
-              ),
-            ),
           ],
         ),
       ),

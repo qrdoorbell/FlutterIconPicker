@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/controllers/icon_controller.dart';
 import '../Helpers/ColorBrightness.dart';
 import '../IconPicker/iconPicker.dart';
-import '../IconPicker/searchBar.dart';
 import '../Models/IconPack.dart';
 
 class FIPFullScreenDialog extends StatelessWidget {
@@ -23,6 +22,8 @@ class FIPFullScreenDialog extends StatelessWidget {
     required this.iconSize,
     required this.mainAxisSpacing,
     required this.crossAxisSpacing,
+    required this.selectedIcon,
+    required this.showSelectedIcon,
   }) : super(key: key);
 
   final FIPIconController iconController;
@@ -40,6 +41,8 @@ class FIPFullScreenDialog extends StatelessWidget {
   final double? iconSize;
   final double? mainAxisSpacing;
   final double? crossAxisSpacing;
+  final IconData? selectedIcon;
+  final bool? showSelectedIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -47,65 +50,50 @@ class FIPFullScreenDialog extends StatelessWidget {
       backgroundColor: backgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.only(
-            top: 10,
-            bottom: 20,
-            left: 20,
-            right: 20,
-          ),
+          padding: EdgeInsets.only(top: 10, bottom: 20, left: 20, right: 20),
           child: Column(
             children: <Widget>[
-              Container(
-                height: kToolbarHeight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 6),
-                      child: DefaultTextStyle(
-                        child: title!,
-                        style: TextStyle(
-                          color: FIPColorBrightness(backgroundColor!).isLight()
-                              ? Colors.black
-                              : Colors.white,
-                          fontSize: 20,
-                        ),
+              if (selectedIcon != null)
+                Container(
+                    decoration: BoxDecoration(
+                        color: iconColor != null && FIPColorBrightness(iconColor!).isLight() ? Colors.black : Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(15)),
+                    height: kToolbarHeight,
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      if (selectedIcon != null)
+                        Expanded(
+                            child: Padding(
+                                padding: const EdgeInsets.only(left: 50),
+                                child:
+                                    SizedBox(height: 90, width: 90, child: Icon(selectedIcon, size: 90, color: iconColor ?? Colors.grey)))),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(icon: Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: FIPColorBrightness(backgroundColor!).isLight()
-                            ? Colors.black
-                            : Colors.white,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ),
-              if (showSearchBar!)
-                FIPSearchBar(
-                  iconController: iconController,
-                  iconPack: iconPackMode,
-                  customIconPack: customIconPack,
-                  searchIcon: searchIcon,
-                  searchClearIcon: searchClearIcon,
-                  searchHintText: searchHintText,
-                  backgroundColor: backgroundColor,
+                    ])),
+              if (selectedIcon == null)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                      icon: Icon(Icons.close, color: FIPColorBrightness(backgroundColor!).isLight() ? Colors.black : Colors.white),
+                      onPressed: () => Navigator.pop(context)),
                 ),
               Expanded(
-                child: FIPIconPicker(
-                  iconController: iconController,
-                  showTooltips: showTooltips,
-                  iconPack: iconPackMode,
-                  customIconPack: customIconPack,
-                  iconColor: iconColor,
-                  backgroundColor: backgroundColor,
-                  noResultsText: noResultsText,
-                  iconSize: iconSize,
-                  mainAxisSpacing: mainAxisSpacing,
-                  crossAxisSpacing: crossAxisSpacing,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: FIPIconPicker(
+                    iconController: iconController,
+                    showTooltips: showTooltips,
+                    iconPack: iconPackMode,
+                    customIconPack: customIconPack,
+                    iconColor: iconColor,
+                    backgroundColor: backgroundColor,
+                    noResultsText: noResultsText,
+                    iconSize: iconSize,
+                    mainAxisSpacing: mainAxisSpacing,
+                    crossAxisSpacing: crossAxisSpacing,
+                    selectedIcon: selectedIcon,
+                  ),
                 ),
               ),
             ],

@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isAdaptive = true;
   bool showTooltips = false;
   bool showSearch = true;
+  IconData? selectedIcon;
 
   @override
   void initState() {
@@ -33,17 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
       adaptiveDialog: isAdaptive,
       showTooltips: showTooltips,
       showSearchBar: showSearch,
-      iconPickerShape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      iconPickerShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       iconPackModes: [IconPack.cupertino, IconPack.lineAwesomeIcons],
+      selectedIcon: this.selectedIcon,
     );
 
     if (icon != null) {
       notifier.iconData = icon;
-      setState(() {});
+      setState(() {
+        selectedIcon = icon;
+      });
 
-      debugPrint(
-          'Picked Icon:  $icon and saved it successfully in local hive db.');
+      debugPrint('Picked Icon:  $icon and saved it successfully in local hive db.');
     }
   }
 
@@ -94,21 +96,21 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 ElevatedButton(
                   onPressed: _pickIcon,
-                  child: Text(notifier.iconData != null
-                      ? 'Change Icon'
-                      : 'Open IconPicker'),
+                  child: Text(notifier.iconData != null ? 'Change Icon' : 'Open IconPicker'),
                 ),
                 if (notifier.iconData != null)
                   ElevatedButton(
-                    onPressed: () => setState(() => notifier.iconData = null),
+                    onPressed: () => setState(() {
+                      notifier.iconData = null;
+                      selectedIcon = null;
+                    }),
                     child: const Text('Clear Icon'),
                   ),
               ],
             ),
             const SizedBox(height: 10),
             Consumer<IconNotifier>(
-              builder: (BuildContext ctx, dynamic d, Widget? w) =>
-                  AnimatedSwitcher(
+              builder: (BuildContext ctx, dynamic d, Widget? w) => AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: notifier.iconData != null
                     ? Column(
@@ -134,24 +136,21 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Flexible(
               child: SwitchListTile.adaptive(
-                title: const Text('Show search-bar',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text('Show search-bar', style: TextStyle(color: Colors.white)),
                 value: showSearch,
                 onChanged: (val) => setState(() => showSearch = val),
               ),
             ),
             Flexible(
               child: SwitchListTile.adaptive(
-                title: const Text('Show tooltips',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text('Show tooltips', style: TextStyle(color: Colors.white)),
                 value: showTooltips,
                 onChanged: (val) => setState(() => showTooltips = val),
               ),
             ),
             Flexible(
               child: SwitchListTile.adaptive(
-                title: const Text('Adaptive dialog',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text('Adaptive dialog', style: TextStyle(color: Colors.white)),
                 value: isAdaptive,
                 onChanged: (val) => setState(() => isAdaptive = val),
               ),

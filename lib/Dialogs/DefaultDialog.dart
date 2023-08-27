@@ -32,6 +32,8 @@ class FIPDefaultDialog extends StatelessWidget {
     this.noResultsText,
     this.iconPackMode,
     this.customIconPack,
+    this.selectedIcon,
+    this.showSelectedIcon,
   }) : super(key: key);
 
   final FIPIconController controller;
@@ -55,6 +57,8 @@ class FIPDefaultDialog extends StatelessWidget {
   final String? noResultsText;
   final List<IconPack>? iconPackMode;
   final Map<String, IconData>? customIconPack;
+  final IconData? selectedIcon;
+  final bool? showSelectedIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +83,8 @@ class FIPDefaultDialog extends StatelessWidget {
               iconSize: iconSize,
               mainAxisSpacing: mainAxisSpacing,
               crossAxisSpacing: crossAxisSpacing,
+              selectedIcon: selectedIcon,
+              showSelectedIcon: showSelectedIcon,
             );
           }
           return AdaptiveDialog(
@@ -105,10 +111,7 @@ class FIPDefaultDialog extends StatelessWidget {
                             child: DefaultTextStyle(
                               child: title!,
                               style: TextStyle(
-                                color:
-                                    FIPColorBrightness(backgroundColor!).isLight()
-                                        ? Colors.black
-                                        : Colors.white,
+                                color: FIPColorBrightness(backgroundColor!).isLight() ? Colors.black : Colors.white,
                                 fontSize: 20,
                               ),
                             ),
@@ -116,9 +119,7 @@ class FIPDefaultDialog extends StatelessWidget {
                           IconButton(
                             icon: Icon(
                               Icons.close,
-                              color: FIPColorBrightness(backgroundColor!).isLight()
-                                  ? Colors.black
-                                  : Colors.white,
+                              color: FIPColorBrightness(backgroundColor!).isLight() ? Colors.black : Colors.white,
                             ),
                             onPressed: () => Navigator.pop(context),
                           ),
@@ -147,6 +148,7 @@ class FIPDefaultDialog extends StatelessWidget {
                         iconSize: iconSize,
                         mainAxisSpacing: mainAxisSpacing,
                         crossAxisSpacing: crossAxisSpacing,
+                        selectedIcon: selectedIcon,
                       ),
                     ),
                   ],
@@ -161,9 +163,7 @@ class FIPDefaultDialog extends StatelessWidget {
             title: DefaultTextStyle(
               child: title!,
               style: TextStyle(
-                color: FIPColorBrightness(backgroundColor!).isLight()
-                    ? Colors.black
-                    : Colors.white,
+                color: FIPColorBrightness(backgroundColor!).isLight() ? Colors.black : Colors.white,
                 fontSize: 20,
               ),
             ),
@@ -193,6 +193,7 @@ class FIPDefaultDialog extends StatelessWidget {
                       iconSize: iconSize,
                       mainAxisSpacing: mainAxisSpacing,
                       crossAxisSpacing: crossAxisSpacing,
+                      selectedIcon: selectedIcon,
                     ),
                   ),
                 ],

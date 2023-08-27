@@ -16,7 +16,6 @@ import 'Models/IconPack.dart';
 class FlutterIconPicker {
   static Future<IconData?> showIconPicker(
     BuildContext context, {
-
     /// Defines if the searchbar will be
     /// shown above the icons
     bool showSearchBar = true,
@@ -91,6 +90,10 @@ class FlutterIconPicker {
       textScaleFactor: 1.25,
     ),
 
+    /// The selected Icon to be highlighted
+    /// Defaults to `null`
+    IconData? selectedIcon,
+
     /// The prefix icon before the search textfield
     /// Defaults to:
     /// ```dart
@@ -129,19 +132,14 @@ class FlutterIconPicker {
     if (iconColor == null) iconColor = Theme.of(context).iconTheme.color;
     if (constraints == null) {
       if (adaptiveDialog) {
-        constraints =
-            const BoxConstraints(maxHeight: 500, minWidth: 450, maxWidth: 720);
+        constraints = const BoxConstraints(maxHeight: 500, minWidth: 450, maxWidth: 720);
       } else {
-        constraints =
-            const BoxConstraints(maxHeight: 350, minWidth: 450, maxWidth: 678);
+        constraints = const BoxConstraints(maxHeight: 350, minWidth: 450, maxWidth: 678);
       }
     }
 
-    if (iconPickerShape == null)
-      iconPickerShape =
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0));
-    if (backgroundColor == null)
-      backgroundColor = Theme.of(context).dialogBackgroundColor;
+    if (iconPickerShape == null) iconPickerShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0));
+    if (backgroundColor == null) backgroundColor = Theme.of(context).dialogBackgroundColor;
 
     IconData? iconPicked;
 
@@ -149,8 +147,8 @@ class FlutterIconPicker {
 
     if (adaptiveDialog) {
       if (MediaQuery.of(context).size.width >= constraints.maxWidth) {
-        iconPicked = await showDialog(
-          barrierDismissible: barrierDismissible,
+        iconPicked = await showModalBottomSheet(
+          // barrierDismissible: barrierDismissible,
           context: context,
           builder: (BuildContext context) => FIPDefaultDialog(
             controller: controller,
@@ -173,6 +171,7 @@ class FlutterIconPicker {
             noResultsText: noResultsText,
             iconPackMode: iconPackModes,
             customIconPack: customIconPack,
+            selectedIcon: selectedIcon,
           ),
         );
       } else {
@@ -202,6 +201,7 @@ class FlutterIconPicker {
               noResultsText: noResultsText,
               iconPackMode: iconPackModes,
               customIconPack: customIconPack,
+              selectedIcon: selectedIcon,
             ),
           ),
         );
@@ -230,6 +230,7 @@ class FlutterIconPicker {
           noResultsText: noResultsText,
           iconPackMode: iconPackModes,
           customIconPack: customIconPack,
+          selectedIcon: selectedIcon,
         ),
       );
     }
